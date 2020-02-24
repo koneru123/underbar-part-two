@@ -1,0 +1,48 @@
+allow-uncaught: false
+async-only: false
+bail: false
+check-leaks: false
+color: true
+delay: false
+diff: true
+exit: false # could be expressed as "no-exit: true"
+extension:
+  - js
+# fgrep and grep are mutually exclusive
+# fgrep: something
+file:
+  - ./node_modules/chai/chai.js
+  - ./node_modules/mocha/lib/mocha.js
+  - ./node_modules/sinon/pkg/sinon.js
+  - ./node_modules/sinon-chai/lib/sinon-chai.js
+  #- ./lib/chai.js
+  #- ./lib/mocha.js
+  #- ./lib/sinon.js
+  #- ./lib/sinon-chai.js
+  - ./src/underbar.js
+  - ./lib/testSupport.js
+forbid-only: false
+forbid-pending: false
+full-trace: false
+global:
+# fgrep and grep are mutually exclusive
+# grep: something
+growl: false
+ignore:
+  - /node_modules/
+inline-diffs: false
+# needs to be used with grep or fgrep
+# invert: false
+opts: false
+recursive: false
+reporter: spec
+retries: 1
+slow: 75
+sort: false
+spec:
+  - spec/part1.js
+  - spec/part2.js
+timeout: false # same as "no-timeout: true" or "timeout: 0"
+trace-warnings: true # node flags ok
+ui: bdd
+v8-stack-trace-limit: 100 # V8 flags are prepended with "v8-"
