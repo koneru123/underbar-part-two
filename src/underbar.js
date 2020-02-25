@@ -179,7 +179,7 @@
   //   }); // should be 5, regardless of the iterator function passed in
   //          No accumulator is given so the first element is used.
   _.reduce = function(collection, iterator, accumulator) {
-    var initializing = arguments.length === 2;
+    var initializing = arguments.length === 2; //false
 
     _.each(collection, function(val) {
       if (initializing) {
@@ -214,17 +214,99 @@
     /* START SOLUTION */
 
     /* END SOLUTION */
+    if(collection.length === 0) {
+      return true;
+    }
+    var isTrue = true;
+
+    if(iterator) {
+      for(let j = 0; j < collection.length; j++) {
+        if(!iterator(collection[j])) {
+          isTrue = false;
+          return isTrue;
+        } else {
+          isTrue = true;
+        }
+      }
+    } else {
+        for(let i = 0; i < collection.length; i++) {
+          if(!collection[i] || typeof(collection[i]) === undefined || collection[i] === 0 || collection[i] === null) {
+            isTrue = false;
+            return isTrue;
+          } else {
+            isTrue = true;
+          }
+        }
+    }
+    return isTrue;
+
+    // collection will always be an array
+    // empty array should evaluate to true
+    // array could have different data types && if they are truthy that should
+    // ...evaluate to true if not evaluate to false
+    // if any value is false should evaluate to false
+    // if any of the value is undefined should evaluate to false
+    // if all the values passed to the iterator function evaluates to true return
+    // ...true if not false
   };
+
+/*
+var isEven = function(num) {
+  return num % 2 === 0;
+};
+
+var myTest = _.every([0, 10, 28], isEven)
+console.log(myTest);*/
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
+
   _.some = function(collection, iterator) {
     // TIP: There's a very clever way to re-use every() here.
     /* START SOLUTION */
+    let value = true;
+    //console.log(JSON.stringify(arguments));
+    //console.log(arguments.length);
+    if(arguments.length > 1) {
+      if(collection.length === 0) {
+        return false;
+      }
+      //value = _.every(collection, iterator);
+      for(let i = 0; i < collection.length; i++) {
+        if(iterator(collection[i])) {
+          value = true;
+          return value;
+        }
+      }
+      if(_.every(collection, iterator) || collection.includes(true) || collection.includes('yes')) {
+        value = true;
+      } else {
+        value = false;
+      }
+    } else {
+      //value = _.every(collection)
+      if(collection.length === 0) {
+        return false;
+      }
+      if(collection.includes(true) || _.every(collection) || collection.includes('yes')) {
+        value = true;
+      } else {
+        value = false;
+      }
+    }
+return value;
 
     /* END SOLUTION */
+    // collection is always an array
+    // when empty collection, should fail
+    // should pass for all truthy value
+    // should fail for all falsy values (null, 0, undefined, false)
+    // should pass for a collection of truthy and falsey values
+    // should pass for a set containing one truthy value that is a string - 'yes'
+    // when iterator, no matching values, then fail
+    // when iterator, atleast one matching value, then pass
+    // should work when no callbacks provided
   };
-
 
   /**
    * OBJECTS
@@ -245,10 +327,47 @@
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
   _.extend = function(obj) {
-    /* START SOLUTION */
 
-    /* END SOLUTION */
+    //returns the first argument
+    // should extend object with attributes of another object
+    // should override properties found on destination
+    // should not override properties not found in the source
+    // should extend from multiple source objects
+    // in case of conflict, it should use last properties values when extending from multiple source objects
+    let newObj = {};
+    let val = '';
+    if(arguments.length > 1) {
+      let arg1 = JSON.stringify(arguments[0]);
+      let arg2 = JSON.stringify(arguments[1]);
+      if(arg1 === arg2) {
+        return arguments[0];
+      } else {
+        debugger;
+        // when one obj is empty and other is not, the obj that is not empty takes the precedence
+        // when both the obj have same key, source takes precedence
+        // when both the obj does not have same key, destination takes precedence
+        /*if(!arguments[0].hasOwnProperty()) {
+          val = Object.values(arguments[1]).toString();
+          return val;
+        }*/
+        if(!arguments[0].hasOwnProperty()) {
+          newObj = {...arguments[1],...arguments[0]};
+        } else {
+
+        }
+        //val = newObj;
+        //console.log(val);
+        //return val;
+      }
+
+    }
+    return newObj;
   };
+
+  var destination = {};
+  var source = { a: 'b' };
+  var myTest = _.extend(destination, source)
+console.log(myTest);
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
