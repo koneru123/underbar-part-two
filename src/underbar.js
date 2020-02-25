@@ -1,5 +1,6 @@
 (function() {
   'use strict';
+  //var sinon = require("sinon");
 
   if (typeof window !== 'object') {
     //_ = {};
@@ -326,57 +327,79 @@ return value;
   //   }, {
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
-  _.extend = function(obj) {
 
-    //returns the first argument
+  //returns the first argument
     // should extend object with attributes of another object
     // should override properties found on destination
     // should not override properties not found in the source
     // should extend from multiple source objects
     // in case of conflict, it should use last properties values when extending from multiple source objects
-    let newObj = {};
-    let val = '';
-    if(arguments.length > 1) {
+  _.extend = function(obj) {
+    if(arguments.length === 2) {
       let arg1 = JSON.stringify(arguments[0]);
       let arg2 = JSON.stringify(arguments[1]);
       if(arg1 === arg2) {
         return arguments[0];
-      } else {
-        debugger;
-        // when one obj is empty and other is not, the obj that is not empty takes the precedence
-        // when both the obj have same key, source takes precedence
-        // when both the obj does not have same key, destination takes precedence
-        /*if(!arguments[0].hasOwnProperty()) {
-          val = Object.values(arguments[1]).toString();
-          return val;
-        }*/
-        if(!arguments[0].hasOwnProperty()) {
-          newObj = {...arguments[1],...arguments[0]};
-        } else {
-
-        }
-        //val = newObj;
-        //console.log(val);
-        //return val;
       }
-
+    }
+    let newObj = {};
+    for(let i = 0; i < arguments.length; i++) {
+      let currObj = arguments[i];
+      for(let key in currObj) {
+          newObj[key] = currObj[key];
+      }
     }
     return newObj;
+    /*if(arguments.length > 1) {
+      let arg1 = JSON.stringify(arguments[0]);
+      let arg2 = JSON.stringify(arguments[1]);
+      if(arg1 === arg2) {
+        //debugger;
+        return arguments[0];
+      } else {
+        //debugger;
+        let key1 = JSON.stringify(Object.keys(arguments[0]));
+        let key2 = JSON.stringify(Object.keys(arguments[1]));
+        if(Object.keys(arguments[0]).length === 0) {
+          newObj = {...arguments[1]};
+          return newObj;
+        } else if(key1 === key2) {
+          //debugger;
+          newObj = {...arguments[1]};
+          return newObj;
+        } else if(key1 !== key2) {
+          //debugger;
+          newObj = {...arguments[0],...arguments[1]};
+          return newObj;
+        }
+      }
+    }
+    return newObj;*/
   };
-
-  var destination = {};
-  var source = { a: 'b' };
-  var myTest = _.extend(destination, source)
-console.log(myTest);
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
     /* START SOLUTION */
-
+    if(arguments.length === 2) {
+      let arg1 = JSON.stringify(arguments[0]);
+      let arg2 = JSON.stringify(arguments[1]);
+      if(arg1 === arg2) {
+        return arguments[0];
+      }
+    }
+    for(let i = 0; i < arguments.length; i++) {
+      for(let key in arguments[i]) {
+          if(arguments[0][key] === undefined) {
+            arguments[0][key] = arguments[i][key];
+          } else {
+            continue;
+          }
+      }
+    }
+    return arguments[0];
     /* END SOLUTION */
   };
-
 
   /**
    * FUNCTIONS
@@ -389,12 +412,26 @@ console.log(myTest);
   // Return a function that can be called at most one time. Subsequent calls
   // should return the previously returned value.
   _.once = function(func) {
+    var executed = false;
+    var args;
+    return function() {
+      if (!executed) {
+        args = func.apply(this, arguments);
+        executed = true;
+      }
+      return args;
+    }
+
     // TIP: These variables are stored in a "closure scope" (worth researching),
     // so that they'll remain available to the newly-generated function every
     // time it's called.
     /* START SOLUTION */
 
     /* END SOLUTION */
+    // this should return a function
+    // it should run only once
+    // .call to take the function arguments and call the function based on the arguments
+    // should always return the result of first call
   };
 
   // Memorize an expensive function's results by storing them. You may assume
@@ -407,9 +444,41 @@ console.log(myTest);
   // instead if possible.
   _.memoize = function(func) {
     /* START SOLUTION */
-
+    var cacheObj = {};
+    var args;
+    return function() {
+      //debugger;
+      var key = JSON.stringify(arguments);
+      //for(let key in cacheObj) {
+        if(cacheObj.hasOwnProperty(key)) {
+          return cacheObj[key];
+        } else {
+          cacheObj[key] = func.apply(null, arguments);
+          //cacheObj[arguments] = arguments;
+          //cacheObj[args] = args;
+          return cacheObj[key];
+        }
+      //}
+    }
     /* END SOLUTION */
+    // Create a cache, object
+    // call the function with the arguments, put it in cache
+    // next time we make a call to the same function, with similar arguments, it should fetch the result from cache
+    // if not make a new call
   };
+/*
+var add = function(a, b) {
+  return a + b;
+};
+var memoAdd = _.memoize(add);*/
+var spy = sinon.spy(function() { return 'Dummy output'; });
+var memoSpy = _.memoize(spy);
+
+var myTest = _.memoize(memoSpy(10));
+var myTest1 = _.memoize(memoSpy(10));
+
+console.log(myTest);
+console.log(myTest1);
 
   // Delays a function for the given number of milliseconds, and then calls
   // it with the arguments supplied.
@@ -419,7 +488,10 @@ console.log(myTest);
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
     /* START SOLUTION */
-
+    var args = Array.prototype.slice.call(arguments,2);
+    return setTimeout(function(){
+      return func.apply(this, args);
+    }, wait);
     /* END SOLUTION */
   };
 
