@@ -466,20 +466,6 @@ return value;
     // next time we make a call to the same function, with similar arguments, it should fetch the result from cache
     // if not make a new call
   };
-/*
-var add = function(a, b) {
-  return a + b;
-};
-var memoAdd = _.memoize(add);*/
-var spy = sinon.spy(function() { return 'Dummy output'; });
-var memoSpy = _.memoize(spy);
-
-var myTest = _.memoize(memoSpy(10));
-var myTest1 = _.memoize(memoSpy(10));
-
-console.log(myTest);
-console.log(myTest1);
-
   // Delays a function for the given number of milliseconds, and then calls
   // it with the arguments supplied.
   //
@@ -508,7 +494,11 @@ console.log(myTest1);
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
     /* START SOLUTION */
-
+    let arr1 = [];
+    for(let i = array.length-1; i >= 0; i--) {
+      arr1.push(array[i]);
+    }
+    return arr1;
     /* END SOLUTION */
   };
 
